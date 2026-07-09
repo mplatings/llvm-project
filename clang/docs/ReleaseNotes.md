@@ -116,6 +116,8 @@ latest release, please see the [Clang Web Site](https://clang.llvm.org) or the
   as being of type `std::size_t` instead of `int`,
   matching the deduction of array sizes from `int(&)[N]`.
   This is a breaking change for code that depended on the previously deduced type. (#GH195033)
+- Clang now rejects C++ declarations that combine the `auto` type specifier
+  with another type specifier, such as `auto int`.
 - Clang now rejects nested local classes defined in a different
   block scope than their parent class. (#GH193472)
 
@@ -156,6 +158,9 @@ latest release, please see the [Clang Web Site](https://clang.llvm.org) or the
   nested template types (for example, ones containing local lambdas) could
   produce very large writable `.data` sections. Emitted RTTI name strings
   change only for types whose name exceeds the length limit. (#GH206313)
+- Fixed Itanium mangling for lambdas in default member initializers of local
+  classes to use `<local-name>` encoding, preventing mangling collisions between
+  distinct local classes.
 
 ### AST Dumping Potentially Breaking Changes
 
@@ -566,6 +571,11 @@ latest release, please see the [Clang Web Site](https://clang.llvm.org) or the
   allowing it to be disabled independently with `-Wno-unused-but-set-global`.
   (#GH148361)
 
+- `-Wunused-template` is now part of `-Wunused` (which is enabled by `-Wall`).
+  It diagnoses unused function and variable templates with internal linkage,
+  which in a header is a latent ODR hazard. It can be disabled with
+  `-Wno-unused-template`. (#GH202945)
+
 - Added `-Wlifetime-safety` to enable lifetime safety analysis,
   a CFG-based intra-procedural analysis that detects use-after-free and related
   temporal safety bugs. See the
@@ -815,6 +825,7 @@ latest release, please see the [Clang Web Site](https://clang.llvm.org) or the
 - Fixed a preprocessor assertion failure triggered when parsing an invalid template-id starting with `::template operator`. (#GH186582)
 - Fixed a crash when a function template is defined as a non-template friend with a global scope qualifier. (#GH185341)
 - Clang now rejects constant template parameters with block pointer types, since these are not implemented anyway and would lead to crashes. (#GH189247)
+- Clang no longer reject call expressions whose type is a not-yet-deduced auto type. (#GH207565)
 - Fixed a crash on error recovery when dealing with invalid templates. (#GH183075)
 - Fixed a crash when instantiating `requires` expressions involving substitution failures in C++ concepts. (#GH176402)
 - Concepts appearing in the require-clause of a member function no longer have access to non-public members of that class,
@@ -874,6 +885,8 @@ latest release, please see the [Clang Web Site](https://clang.llvm.org) or the
 - Fixed a missing vtable for `dynamic_cast<FinalClass *>(this)` in a function template. (#GH198511)
 - Fixed an assertion failure during init-list checking of an array whose element type is an incomplete class. (#GH140685)
 - Fixed a crash when using a pack indexing type (e.g. ``Ts...[0]``) imported from another module. (#GH204479)
+- Fixed an ODR-merging error in modules, where class-scope `using enum` declarations were not recognized as matching across module
+  boundaries.  (#GH207066)
 
 #### Bug Fixes to AST Handling
 

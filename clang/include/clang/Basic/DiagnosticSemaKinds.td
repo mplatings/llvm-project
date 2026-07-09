@@ -1018,7 +1018,7 @@ def err_ptrauth_invalid_key :
         "the current target">;
 def err_ptrauth_value_bad_type :
   Error<"%select{signed value|extra discriminator|blended pointer|blended "
-        "integer}0 must have %select{pointer|integer|pointer or integer}1 "
+        "integer|blended pc}0 must have %select{pointer|integer|pointer or integer}1 "
         "type; type here is %2">;
 def err_ptrauth_bad_constant_pointer :
   Error<"argument to ptrauth_sign_constant must refer to a global variable "
@@ -1033,6 +1033,8 @@ def warn_ptrauth_sign_null_pointer :
 def warn_ptrauth_auth_null_pointer :
   Warning<"authenticating a null pointer will almost certainly trap">,
   InGroup<PtrAuthNullPointers>;
+def err_ptrauth_auth_with_pc_and_resign_invalid_key :
+  Error<"ptrauth_auth_with_pc_and_resign only supports auth with IA and IB keys, not %0">;
 def err_ptrauth_string_not_literal : Error<
   "argument must be a string literal%select{| of char type}0">;
 def err_ptrauth_type_disc_undiscriminated : Error<
@@ -2757,6 +2759,8 @@ def err_decltype_auto_invalid : Error<
   "'decltype(auto)' not allowed here">;
 def err_decltype_auto_cannot_be_combined : Error<
   "'decltype(auto)' cannot be combined with other type specifiers">;
+def err_auto_type_specifier : Error<
+  "'auto' cannot be combined with a type specifier">;
 def err_decltype_auto_function_declarator_not_declaration : Error<
   "'decltype(auto)' can only be used as a return type "
   "in a function declaration">;
